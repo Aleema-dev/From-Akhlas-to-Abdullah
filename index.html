@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine's Invite</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Sora:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --deep-pink: #e91e63;
+    --soft-blue: #4da3ff;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #fdfdfd;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Floating hearts */
+.heart {
+    position: fixed;
+    bottom: -50px;
+    opacity: 1; /* Made it solid */
+    animation: floatUp linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { opacity: 1; } /* Made it solid during the float */
+    100% { transform: translateY(-120vh); opacity: 0; }
+}
+/* Card */
+.card {
+    width: 380px;
+    max-width: 90%;
+    min-height: 420px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 40px;
+    box-shadow:
+        0 20px 80px rgba(233,30,99,0.25),
+        0 10px 40px rgba(77,163,255,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    text-align: center;
+    position: relative; /* important for No button */
+    z-index: 5;
+}
+
+/* Title */
+h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--deep-pink), var(--soft-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: floatText 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatText {
+    from { transform: translateY(-5px); }
+    to { transform: translateY(5px); }
+}
+
+#statusText {
+    font-size: 14px;
+    color: #555;
+    margin: 15px 0;
+}
+
+/* Buttons */
+button {
+    width: 220px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.4s ease;
+    font-family: inherit;
+}
+
+/* Yes button */
+#yesBtn {
+    background: linear-gradient(135deg, var(--deep-pink), var(--soft-blue));
+    color: white;
+    box-shadow: 0 10px 30px rgba(77,163,255,0.3);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Smooth bounce */
+    z-index: 5; /* Keep it above other elements */
+    display: inline-block;
+    transform-origin: center;
+}
+/* This class will be added via JavaScript */
+.grow {
+    transform: scale(1.5); /* Makes it 50% bigger */
+}
+#yesBtn:hover {
+    transform: translateY(-5px);
+}
+
+/* No button */
+#noBtn {
+    position: absolute;      /* inside card */
+    left: 50%;
+    top: 345px;              /* starts below Yes */
+    transform: translateX(-50%);
+    background: white;
+    color: var(--soft-blue);
+    border: 2px solid var(--soft-blue);
+    box-shadow: 0 6px 18px rgba(77,163,255,0.15);
+    transition: all 0.4s ease;
+    z-index: 999;
+}
+
+/* Mobile adjustments */
+@media (max-width: 500px) {
+    h1 {
+        font-size: 22px;
+    }
+    button {
+        width: 180px;
+        font-size: 15px;
+    }
+    .card {
+        padding: 25px 15px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating hearts container -->
+<div id="particles"></div>
+
+<!-- Card -->
+<div class="card" id="mainCard">
+    <h1>Will you be my Valentine<br>Ahmad Abdullah Alsaleh?</h1>
+    <p id="statusText">Choose wisely...</p>
+    <button id="yesBtn" onclick="celebrate()">Yes</button>
+    <button id="noBtn" onmouseover="dodge()">No</button>
+</div>
+
+<script>
+/* Floating hearts */
+const emojis = ["❤️","💖","💕","💙"];
+for (let i = 0; i < 30; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (14 + Math.random() * 12) + "px";
+    heart.style.animationDuration = (14 + Math.random() * 10) + "s";
+    heart.style.animationDelay = Math.random() * 5 + "s";
+    document.body.appendChild(heart);
+}
+
+/* Dodge function for No button */
+let growthLevel = 0; 
+
+function dodge() {
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const card = document.getElementById("mainCard");
+
+    // 1. Move the No Button
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+    const padding = 20; 
+    const maxX = card.clientWidth - btnWidth - padding;
+    const maxY = card.clientHeight - btnHeight - padding;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
+
+    // 2. Make the Yes Button grow
+    growthLevel++;
+    const newScale = 1 + (growthLevel * 0.2); 
+    
+    // FIXED LINE BELOW: Added backticks around the scale string
+    yesBtn.style.transform =` scale(${newScale})`;
+
+    // 3. Update text based on growth
+    if (growthLevel === 1) {
+        yesBtn.innerText = "Yes (Please?)";
+    } else if (growthLevel === 2) {
+        yesBtn.innerText = "Yes (I'm waiting!)";
+    } else if (growthLevel === 3) {
+        yesBtn.innerText = "Yes (No choice now!)";
+    } else if (growthLevel >= 4) {
+        yesBtn.innerText = "JUST SAY YES! ❤️";
+    }
+}
+
+/* Celebration on Yes click */
+function celebrate() {
+    const card = document.getElementById("mainCard");
+    card.innerHTML = `
+        <h1>Good choice 💙</h1>
+        <p style="color:#666;font-weight:600;margin-top:10px;">
+            On this Valentine’s Day💗, I just want you to know how much you mean to me, Ahmad Abdullah❤️. You’re not just a friend, you’re a brother by heart. Thank you for always standing by my side through every high and low. I’m truly grateful for your loyalty, support, and genuine care. Our bond is something I deeply cherish.
+
+With love,
+Muhammad Akhlas 💕 
+        </p>
+    `;
+}
+
+/* Initialize No button position */
+window.onload = function() {
+    const noBtn = document.getElementById("noBtn");
+    if(noBtn) {
+        noBtn.style.left = "50%";
+        noBtn.style.top = "345px";
+    }
+};
+</script>
+</body>
+</html>
