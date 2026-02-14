@@ -134,16 +134,20 @@ button {
 }
 
 /* Mobile adjustments */
+/* Replace your existing Mobile adjustments block with this */
 @media (max-width: 500px) {
+    .card {
+        width: 320px;          /* Slightly narrower than original for better fit */
+        min-height: 380px;     /* A bit shorter to keep it compact */
+        padding: 20px 15px;    /* Reduced inner spacing */
+    }
     h1 {
-        font-size: 22px;
+        font-size: 20px;       /* Slightly smaller text to fit the new width */
     }
     button {
-        width: 180px;
+        width: 160px;          /* Slimmer buttons for a cleaner look */
         font-size: 15px;
-    }
-    .card {
-        padding: 25px 15px;
+        padding: 12px;
     }
 }
 </style>
@@ -241,4 +245,5 @@ window.onload = function() {
 </body>
 
 </html>
+
 
